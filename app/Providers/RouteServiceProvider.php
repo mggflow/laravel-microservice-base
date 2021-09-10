@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Microservice\Exceptions\TooManyRequests;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -81,6 +82,7 @@ class RouteServiceProvider extends ServiceProvider
         // If app not in root directory need to correct prefix
         Route::prefix(env('ROOT_PREFIX','').'api')
             ->middleware([
+                'throttle:api',
                 'msvc_cookies_encrypter',
                 'msvc_cookies_decoder',
                 'msvc_cookies_handler',
@@ -102,7 +104,9 @@ class RouteServiceProvider extends ServiceProvider
     protected function configureRateLimiting()
     {
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(90)->by(optional($request->user())->id ?: $request->ip());
+            return Limit::perMinute(128)->by($request->ip())->response(function (){
+                throw new TooManyRequests();
+            });
         });
     }
 }
