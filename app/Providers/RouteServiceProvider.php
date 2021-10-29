@@ -90,6 +90,7 @@ class RouteServiceProvider extends ServiceProvider
                 'msvc_response_encoder',
                 'msvc_validation',
                 'msvc_mapping',
+                'msvc_auth',
                 'api',
             ])
             ->namespace($this->namespace)

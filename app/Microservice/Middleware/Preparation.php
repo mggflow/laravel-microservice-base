@@ -48,6 +48,7 @@ class Preparation
         $parsed = [
             'msvc_object' => false,
             'msvc_action' => false,
+            'msvc_authenticated' => false,
         ];
 
         $withoutUriPrefix = mb_stristr($path, 'api/');

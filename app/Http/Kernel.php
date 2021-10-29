@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'msvc_preparation' => \App\Microservice\Middleware\Preparation::class,
         'msvc_validation' => \App\Microservice\Middleware\BasicValidation::class,
         'msvc_mapping' => \App\Microservice\Middleware\Mapping::class,
+        'msvc_auth' => \App\Microservice\Middleware\MsvcAuthentication::class,
         'msvc_response_encoder' => \App\Microservice\Middleware\ResponseEncoder::class,
         'msvc_cookies_encrypter' => \App\Microservice\Middleware\CookiesEncrypter::class,
         'msvc_cookies_handler' => \App\Microservice\Middleware\CookiesAttach::class,

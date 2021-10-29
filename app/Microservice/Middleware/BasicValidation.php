@@ -16,6 +16,7 @@ class BasicValidation
      */
     protected array $rules = [
         'msvc' => ['required', 'string', 'max:32'],
+        'msvc_access_key' => ['alpha_num', 'max:64'],
     ];
 
     /**
