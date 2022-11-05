@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    cron \
     nano-tiny
 
 # Clear cache
@@ -30,15 +29,6 @@ RUN useradd -G www-data,root -u $uid -d /home/$user $user
 RUN mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user && \
     chown -R $user:$user /var/www
-
-# Add crontab file in the cron directory
-ADD crontasks /etc/cron.d/tasks
-
-# Give execution rights on the cron job
-RUN chmod 0644 /etc/cron.d/tasks
-
-# Create the log file to be able to run tail
-RUN touch /var/log/cron.log
 
 # Set working directory
 WORKDIR /var/www
