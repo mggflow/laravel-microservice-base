@@ -1,0 +1,33 @@
+version: "3.7"
+services:
+    lv:
+        build:
+            args:
+                user: sammy
+                uid: 1000
+            context: ./
+            dockerfile: Dockerfile
+        image: msvcname
+        container_name: msvcname-lv
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+        networks:
+            - msvcname
+
+    nginx:
+        image: nginx:alpine
+        container_name: msvcname-nginx
+        restart: unless-stopped
+        ports:
+            - 8004:80
+        volumes:
+            - ./:/var/www
+            - ./docker-compose/nginx:/etc/nginx/conf.d/
+        networks:
+            - msvcname
+
+networks:
+    msvcname:
+        driver: bridge
