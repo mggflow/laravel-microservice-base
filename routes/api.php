@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\Route;
  * Routes microservice API.
  */
 Route::prefix('{microserviceName}')->group(function (){
+    Route::prefix('monitoring')->group(function (){
+        Route::any('ping','MonitoringController@ping');
+    });
+
     Route::any('hello','MainController@hello');
 });
 
