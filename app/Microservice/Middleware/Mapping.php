@@ -2,12 +2,13 @@
 
 namespace App\Microservice\Middleware;
 
-use App\Microservice\Exceptions\NotFoundException;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
+use MGGFLOW\ExceptionManager\Interfaces\UniException;
+use MGGFLOW\ExceptionManager\ManageException;
 
 class Mapping
 {
@@ -62,7 +63,7 @@ class Mapping
      * @param Request $request
      * @param Closure $next
      * @return mixed
-     * @throws NotFoundException
+     * @throws UniException
      */
     public function handle(Request $request, Closure $next)
     {
@@ -72,7 +73,10 @@ class Mapping
             $redirect = $this->createRedirectResponse($incomingMSVCName);
 
             if ($redirect === false) {
-                throw new NotFoundException();
+                throw ManageException::build()
+                    ->log()->info()->b()
+                    ->desc()->not('MSVC')->found()->b()
+                    ->fill();
             } else {
                 return $redirect;
             }

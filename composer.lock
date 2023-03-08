@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "781617ecc76f1f619eaf9d81f29ddf23",
+    "content-hash": "585b318e76fbb5eb7e5ff794706b58ee",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1663,6 +1663,47 @@
                 }
             ],
             "time": "2021-09-25T08:23:19+00:00"
+        },
+        {
+            "name": "mggflow/exception-manager",
+            "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mggflow/exception-manager.php.git",
+                "reference": "eb478034d0540b62e20fb26e2f8ca11f40c14589"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mggflow/exception-manager.php/zipball/eb478034d0540b62e20fb26e2f8ca11f40c14589",
+                "reference": "eb478034d0540b62e20fb26e2f8ca11f40c14589",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MGGFLOW\\ExceptionManager\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pavel Eliseev",
+                    "email": "deusagnis@gmail.com",
+                    "homepage": "https://mggflow.in",
+                    "role": "Developer"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/mggflow/exception-manager.php/issues",
+                "source": "https://github.com/mggflow/exception-manager.php/tree/v3.2.0"
+            },
+            "time": "2023-03-08T18:43:04+00:00"
         },
         {
             "name": "monolog/monolog",

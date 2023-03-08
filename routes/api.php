@@ -1,7 +1,7 @@
 <?php
 
-use App\Microservice\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\Route;
+use MGGFLOW\ExceptionManager\ManageException;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,5 +34,8 @@ Route::prefix('{microserviceName}')->group(function (){
  * API 404 handling.
  */
 Route::fallback(function (){
-    throw new NotFoundException();
+    throw ManageException::build()
+        ->log()->info()->b()
+        ->desc()->not('API')->found()->b()
+        ->fill();
 });

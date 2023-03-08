@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Microservice\Exceptions\TooManyRequests;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use MGGFLOW\ExceptionManager\ManageException;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -27,7 +27,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string|null
      */
-     protected $namespace = 'App\Microservice\Controllers';
+    protected $namespace = 'App\Microservice\Controllers';
 
     /**
      * Define your route model bindings, pattern filters, etc.
@@ -64,7 +64,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes()
     {
         // If app not in root directory need to correct prefix
-        Route::prefix(env('ROOT_PREFIX',''))
+        Route::prefix(env('ROOT_PREFIX', ''))
             ->middleware('web')
             ->namespace('App\Http\Controllers')
             ->group(base_path('routes/web.php'));
@@ -80,7 +80,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapApiRoutes()
     {
         // If app not in root directory need to correct prefix
-        Route::prefix(env('ROOT_PREFIX','').'api')
+        Route::prefix(env('ROOT_PREFIX', '') . 'api')
             ->middleware([
                 'throttle:api',
                 'msvc_cookies_encrypter',
@@ -105,9 +105,13 @@ class RouteServiceProvider extends ServiceProvider
     protected function configureRateLimiting()
     {
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(128)->by($request->ip())->response(function (){
-                throw new TooManyRequests();
-            });
+            return Limit::perMinute(env('MAX_REQUESTS_PER_MINUTE', 128))
+                ->by($request->ip())->response(function () {
+                    throw ManageException::build()
+                        ->log()->warning()->b()
+                        ->desc()->tooMany(null, 'Requests')->b()
+                        ->fill();
+                });
         });
     }
 }

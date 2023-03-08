@@ -2,10 +2,11 @@
 
 namespace App\Microservice\Middleware;
 
-use App\Microservice\Exceptions\BasicValidationFailed;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use MGGFLOW\ExceptionManager\Interfaces\UniException;
+use MGGFLOW\ExceptionManager\ManageException;
 
 class BasicValidation
 {
@@ -25,7 +26,7 @@ class BasicValidation
      * @param Request $request
      * @param Closure $next
      * @return mixed
-     * @throws BasicValidationFailed
+     * @throws UniException
      */
     public function handle(Request $request, Closure $next)
     {
@@ -36,14 +37,17 @@ class BasicValidation
 
     /**
      * @param array $data
-     * @throws BasicValidationFailed
+     * @throws UniException
      */
     protected function validateRequestData(array $data)
     {
         $validator = Validator::make($data, $this->rules);
 
         if ($validator->fails()) {
-            throw new BasicValidationFailed();
+            throw ManageException::build()
+                ->log()->info()->b()
+                ->desc()->failed('Basic Validation')->b()
+                ->fill();
         }
     }
 }
