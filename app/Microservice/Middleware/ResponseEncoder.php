@@ -38,7 +38,12 @@ class ResponseEncoder
     {
         $response = $next($request);
 
-        if (!$response instanceof JsonResponse) {
+        if (is_array($response)
+            or is_scalar($response)
+            or is_null($response)
+        ) {
+            $response = $this->factory->json($response);
+        } elseif (!$response instanceof JsonResponse) {
             $response = $this->factory->json(
                 $response->content(),
                 $response->status(),
