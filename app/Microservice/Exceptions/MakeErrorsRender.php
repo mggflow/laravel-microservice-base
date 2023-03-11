@@ -11,7 +11,7 @@ class MakeErrorsRender
 {
     public static function make(?\Throwable $e = null): array
     {
-        if (!($e instanceof UniException)) {
+        if (!is_null($e) and !($e instanceof UniException)) {
             ManageException::build((new UnexpectedError())->import($e))
                 ->log()->fatal()->b()
                 ->desc()->internal()->b()
