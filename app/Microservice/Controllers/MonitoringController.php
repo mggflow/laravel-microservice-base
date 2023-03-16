@@ -3,7 +3,9 @@
 namespace App\Microservice\Controllers;
 
 
-class MonitoringController extends \App\Http\Controllers\Controller
+use App\Http\Controllers\Controller;
+
+class MonitoringController extends Controller
 {
     /**
      * Check that service is alive.
