@@ -26,7 +26,8 @@
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "mggflow/exception-manager": "^3.2"
+        "mggflow/exception-manager": "^3.2",
+        "mggflow/lv-msvc": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

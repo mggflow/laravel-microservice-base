@@ -15,10 +15,14 @@ class MainController extends Controller
      */
     public function hello(Request $request): array
     {
-        $result = array_merge([
+        $result = [
             'message' => 'Hello World',
             'elapsed' => microtime(true) - LARAVEL_START,
-        ], $request->all());
+        ];
+
+        if (config('app.debug')){
+            return array_merge($result, $request->all());
+        }
 
         return $result;
     }

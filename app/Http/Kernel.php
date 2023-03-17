@@ -54,23 +54,23 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+//        'auth' => \App\Http\Middleware\Authenticate::class,
+//        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+//        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+//        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+//        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+//        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         // Microservice's route middleware
-        'msvc_preparation' => \App\Microservice\Middleware\Preparation::class,
-        'msvc_validation' => \App\Microservice\Middleware\BasicValidation::class,
-        'msvc_mapping' => \App\Microservice\Middleware\Mapping::class,
-        'msvc_auth' => \App\Microservice\Middleware\MsvcAuthentication::class,
-        'msvc_response_encoder' => \App\Microservice\Middleware\ResponseEncoder::class,
-        'msvc_cookies_encrypter' => \App\Microservice\Middleware\CookiesEncrypter::class,
-        'msvc_cookies_handler' => \App\Microservice\Middleware\CookiesAttach::class,
-        'msvc_cookies_decoder' => \App\Microservice\Middleware\CookiesDecoder::class,
+        'msvc_preparation' => \MGGFLOW\LVMSVC\Middleware\Preparation::class,
+        'msvc_validation' => \MGGFLOW\LVMSVC\Middleware\BasicValidation::class,
+        'msvc_mapping' => \MGGFLOW\LVMSVC\Middleware\Mapping::class,
+        'msvc_auth' => \MGGFLOW\LVMSVC\Middleware\MsvcAuthentication::class,
+        'msvc_response_encoder' => \MGGFLOW\LVMSVC\Middleware\ResponseEncoder::class,
+        'msvc_cookies_encrypter' => \MGGFLOW\LVMSVC\Middleware\CookiesEncryption::class,
+        'msvc_cookies_handler' => \MGGFLOW\LVMSVC\Middleware\CookiesAttach::class,
+        'msvc_cookies_decoder' => \MGGFLOW\LVMSVC\Middleware\CookiesDecoder::class,
     ];
 }

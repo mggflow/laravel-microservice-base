@@ -2,12 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
-use MGGFLOW\ExceptionManager\ManageException;
+use MGGFLOW\LVMSVC\Routes\ConfigureRateLimiting;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -36,7 +33,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->configureRateLimiting();
+        ConfigureRateLimiting::configure();
 
         $this->routes(function () {
             $this->map();
@@ -54,6 +51,29 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapWebRoutes();
     }
 
+    public static function isApiRoute(): bool
+    {
+        $route = Route::current();
+        if (empty($route)) return false;
+        $uri = $route->uri();
+
+        $expectedStart = static::genApiPrefix().'/';
+
+        $matchPos = stripos($uri, $expectedStart);
+
+        return $matchPos !== false and $matchPos < 2;
+    }
+
+    public static function genApiPrefix(): string
+    {
+        return ltrim(join('/', [static::getRootPrefix(), 'api']), '/');
+    }
+
+    public static function getRootPrefix(): string
+    {
+        return trim(config('msvc.root_prefix'), '/');
+    }
+
     /**
      * Define the "web" routes for the application.
      *
@@ -63,8 +83,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes()
     {
-        // If app not in root directory need to correct prefix
-        Route::prefix(env('ROOT_PREFIX', ''))
+        // If app is not in root directory need to correct prefix
+        Route::prefix($this->getRootPrefix())
             ->middleware('web')
             ->namespace('App\Http\Controllers')
             ->group(base_path('routes/web.php'));
@@ -79,8 +99,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
-        // If app not in root directory need to correct prefix
-        Route::prefix(env('ROOT_PREFIX', '') . 'api')
+        // If app is not in root directory need to correct prefix
+        Route::prefix(static::genApiPrefix())
             ->middleware([
                 'throttle:api',
                 'msvc_cookies_encrypter',
@@ -95,23 +115,5 @@ class RouteServiceProvider extends ServiceProvider
             ])
             ->namespace($this->namespace)
             ->group(base_path('routes/api.php'));
-    }
-
-    /**
-     * Configure the rate limiters for the application.
-     *
-     * @return void
-     */
-    protected function configureRateLimiting()
-    {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(env('MAX_REQUESTS_PER_MINUTE', 128))
-                ->by($request->ip())->response(function () {
-                    throw ManageException::build()
-                        ->log()->warning()->b()
-                        ->desc()->tooMany(null, 'Requests')->b()
-                        ->fill();
-                });
-        });
     }
 }
