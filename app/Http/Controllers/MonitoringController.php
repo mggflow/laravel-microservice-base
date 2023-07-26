@@ -1,9 +1,6 @@
 <?php
 
-namespace App\Microservice\Controllers;
-
-
-use App\Http\Controllers\Controller;
+namespace App\Http\Controllers;
 
 class MonitoringController extends Controller
 {
