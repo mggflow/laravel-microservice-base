@@ -5,7 +5,7 @@ services:
             context: ./vendor/laravel/sail/runtimes/8.2
             dockerfile: Dockerfile
             args:
-                WWWGROUP: '${WWWGROUP:-:-$(id -g)}'
+                WWWGROUP: '${WWWGROUP:-$(id -g)}'
         image: sail-8.2/app
         container_name: '${APP_NAME:-msvc}_lv'
         extra_hosts:
