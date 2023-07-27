@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Response;
 use MGGFLOW\LVMSVC\Exceptions\MakeErrorsResponseContent;
 use Throwable;
 
@@ -33,7 +34,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $e)
     {
         if (RouteServiceProvider::isApiRoute()) {
-            return MakeErrorsResponseContent::make($e);
+            return Response::json(MakeErrorsResponseContent::make($e));
         }
 
         return parent::render($request, $e);
