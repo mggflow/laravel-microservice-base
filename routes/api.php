@@ -7,6 +7,8 @@ Route::prefix('monitoring')->group(function () {
     Route::any('ping', [\App\Http\Controllers\MonitoringController::class, 'ping']);
 });
 
+Route::any('greeting', [\App\Http\Controllers\GreetingsController::class, 'hello']);
+
 /**
  * API 404 handling.
  */
