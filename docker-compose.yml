@@ -1,57 +1,85 @@
-version: '3'
 services:
     lv:
         build:
-            context: ./vendor/laravel/sail/runtimes/8.2
+            context: './vendor/laravel/sail/runtimes/8.3'
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP:-1000}'
-        image: sail-8.2/app
-        container_name: '${APP_NAME:-msvc}_lv'
+                MYSQL_CLIENT: mariadb-client
+        image: 'sail-8.3/app'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
             - '${APP_PORT:-80}:80'
+            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
         environment:
             WWWUSER: '${WWWUSER:-1000}'
             LARAVEL_SAIL: 1
             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+            IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
         networks:
             - sail
         depends_on:
-            - pgsql
+#            - pgsql
+            - mariadb
             - redis
-            - mailpit
-            - selenium
-    pgsql:
-        image: 'postgres:15'
-        container_name: '${APP_NAME:-msvc}_pgsql'
+#            - selenium
+#            - minio
+#            - mailpit
+#    pgsql:
+#        image: 'postgres:17'
+#        container_name: '${APP_NAME:-msvc}_pgsql'
+#        ports:
+#            - '${FORWARD_DB_PORT:-5432}:5432'
+#        hostname: pgsql
+#        environment:
+#            PGDATA: '/var/lib/postgresql/data/db'
+#            PGPASSWORD: '${DB_PASSWORD:-secret}'
+#            POSTGRES_DB: '${DB_DATABASE}'
+#            POSTGRES_USER: '${DB_USERNAME}'
+#            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+#        volumes:
+#            - 'pgsql-data:/var/lib/postgresql/data'
+#            - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+#        networks:
+#            - sail
+#        healthcheck:
+#            test:
+#                - CMD
+#                - pg_isready
+#                - '-q'
+#                - '-d'
+#                - '${DB_DATABASE}'
+#                - '-U'
+#                - '${DB_USERNAME}'
+#            retries: 3
+#            timeout: 5s
+    mariadb:
+        image: 'mariadb:11'
+        container_name: '${APP_NAME:-msvc}_mariadb'
         ports:
-            - '${FORWARD_DB_PORT:-5432}:5432'
-        hostname: pgsql
+            - '${FORWARD_DB_PORT:-3306}:3306'
         environment:
-            PGDATA: '/var/lib/postgresql/data/db'
-            PGPASSWORD: '${DB_PASSWORD:-secret}'
-            POSTGRES_DB: '${DB_DATABASE}'
-            POSTGRES_USER: '${DB_USERNAME}'
-            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
         volumes:
-            - 'pgsql-data:/var/lib/postgresql/data'
-            - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+            - 'mariadb-data:/var/lib/mysql'
+            - './vendor/laravel/sail/database/mariadb/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
         networks:
             - sail
         healthcheck:
             test:
                 - CMD
-                - pg_isready
-                - '-q'
-                - '-d'
-                - '${DB_DATABASE}'
-                - '-U'
-                - '${DB_USERNAME}'
+                - healthcheck.sh
+                - '--connect'
+                - '--innodb_initialized'
             retries: 3
             timeout: 5s
     redis:
@@ -59,7 +87,6 @@ services:
         container_name: '${APP_NAME:-msvc}_redis'
         ports:
             - '${FORWARD_REDIS_PORT:-6379}:6379'
-        hostname: redis
         volumes:
             - 'redis-data:/data'
         networks:
@@ -71,37 +98,71 @@ services:
                 - ping
             retries: 3
             timeout: 5s
-    mailpit:
-        image: 'axllent/mailpit:latest'
-        container_name: '${APP_NAME:-msvc}_mailpit'
-        ports:
-            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
-            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
-        hostname: mailpit
-        networks:
-            - sail
-    selenium:
-        image: selenium/standalone-chrome
-        container_name: '${APP_NAME:-msvc}_selenium'
-        hostname: selenium
-        shm_size: "2gb"
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        volumes:
-            - '/dev/shm:/dev/shm'
-            - 'chrome-data:/external/chrome/data'
-        networks:
-            - sail
+#    selenium:
+#        image: selenium/standalone-chrome
+#        container_name: '${APP_NAME:-msvc}_selenium'
+#        hostname: selenium
+#        shm_size: "2gb"
+#        extra_hosts:
+#            - 'host.docker.internal:host-gateway'
+#        volumes:
+#            - '/dev/shm:/dev/shm'
+#            - 'chrome-data:/external/chrome/data'
+#        networks:
+#            - sail
+#    minio:
+#        image: 'minio/minio:latest'
+#        container_name: '${APP_NAME:-msvc}_minio'
+#        ports:
+#            - '${FORWARD_MINIO_PORT:-9000}:9000'
+#            - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
+#        environment:
+#            MINIO_ROOT_USER: sail
+#            MINIO_ROOT_PASSWORD: password
+#        volumes:
+#            - 'minio-data:/data'
+#        networks:
+#            - sail
+#        command: 'minio server /data --console-address ":8900"'
+#        healthcheck:
+#            test:
+#                - CMD
+#                - mc
+#                - ready
+#                - local
+#            retries: 3
+#            timeout: 5s
+#    mailpit:
+#        image: 'axllent/mailpit:latest'
+#        container_name: '${APP_NAME:-msvc}_mailpit'
+#        ports:
+#            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+#            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+#        hostname: mailpit
+#        networks:
+#            - sail
 networks:
     sail:
         driver: bridge
 volumes:
+    mariadb-data:
+        driver: local
+        driver_opts:
+            o: bind
+            type: none
+            device: ./volumes/mariadb
     pgsql-data:
         driver: local
         driver_opts:
             o: bind
             type: none
             device: ./volumes/pgsql
+    minio-data:
+        driver: local
+        driver_opts:
+            o: bind
+            type: none
+            device: ./volumes/minio
     redis-data:
         driver: local
         driver_opts:

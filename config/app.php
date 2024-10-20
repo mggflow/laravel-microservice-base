@@ -1,61 +1,42 @@
 <?php
 
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\ServiceProvider;
-
 return [
-    'name' => env('APP_NAME', 'MSVC'),
+    'name' => env('APP_NAME', 'Laravel'),
 
-    'env' => env('APP_ENV', 'prod'),
+    'env' => env('APP_ENV', 'production'),
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 
-    'timezone' => env('TIMEZONE', 'UTC'),
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
-    'locale' => 'en',
+    'locale' => env('APP_LOCALE', 'en'),
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
-    'faker_locale' => 'en_US',
-
-    'key' => env('APP_KEY'),
+    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
     'cipher' => 'AES-256-CBC',
 
+    'key' => env('APP_KEY'),
+
+    'previous_keys' => [
+        ...array_filter(
+            explode(',', env('APP_PREVIOUS_KEYS', ''))
+        ),
+    ],
     'root_prefix' => env('ROOT_PREFIX', ''),
 
     'max_requests_per_minute' => env('MAX_REQUESTS_PER_MINUTE', 128),
 
     'msvc_access_table_name' => env('MSVC_ACCESS_TABLE', 'access'),
 
+
     'maintenance' => [
-        'driver' => 'file',
-        // 'store'  => 'redis',
+        'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
+        'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
-
-    'providers' => ServiceProvider::defaultProviders()->merge([
-        /*
-         * Package Service Providers...
-         */
-
-        /*
-         * Application Service Providers...
-         */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-    ])->toArray(),
-
-
-    'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
-    ])->toArray(),
-
 ];
